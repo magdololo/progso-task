@@ -1,23 +1,31 @@
 import Typography from "@mui/material/Typography";
+import {useAppSelector} from "../app/hooks";
+import {selectArrivals} from "./flightsSlice";
+import {selectDepartures} from "./flightsSlice";
+import {useParams} from "react-router-dom";
+import FlightsTable from "./FlightsTable";
+import {Box, Container} from "@mui/material";
 
 export default function FlightsSchedule() {
+    const {airportName} = useParams()
+
+        const departures = useAppSelector(selectDepartures(airportName??""))
+        const arrivals = useAppSelector(selectArrivals(airportName??""))
+
+
 
     return(
         <>
-            <Typography paragraph>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-                tempor incididunt ut labore et dolore magna aliqua. Rhoncus dolor purus non
-                enim praesent elementum facilisis leo vel. Risus at ultrices mi tempus
-                imperdiet. Semper risus in hendrerit gravida rutrum quisque non tellus.
-                Convallis convallis tellus id interdum velit laoreet id donec ultrices.
-                Odio morbi quis commodo odio aenean sed adipiscing. Amet nisl suscipit
-                adipiscing bibendum est ultricies integer quis. Cursus euismod quis viverra
-                nibh cras. Metus vulputate eu scelerisque felis imperdiet proin fermentum
-                leo. Mauris commodo quis imperdiet massa tincidunt. Cras tincidunt lobortis
-                feugiat vivamus at augue. At augue eget arcu dictum varius duis at
-                consectetur lorem. Velit sed ullamcorper morbi tincidunt. Lorem donec massa
-                sapien faucibus et molestie ac.
-            </Typography>
+            <Container sx={{display: 'flex', margin: '0 auto'}}>
+                <Box sx={{width: '50%', margin: '0 2em', display: 'flex', flexDirection: 'column'}}>
+                    <Typography sx={{fontSize: '1.8em', paddingBottom: '1em', color: 'gray'}}>Arrivals</Typography>
+                    <FlightsTable flights={arrivals} direction={"arr"}/>
+                </Box>
+                <Box sx={{width: '50%', margin: '0 2em', display: 'flex', flexDirection: 'column'}}>
+                    <Typography sx={{fontSize: '1.8em', paddingBottom: '1em', color: 'gray'}}>Departures</Typography>
+                    <FlightsTable flights={departures} direction={"dep"}/>
+                </Box>
+            </Container>
         </>
     )
 }

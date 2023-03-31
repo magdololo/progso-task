@@ -13,18 +13,24 @@ import MenuIcon from '@mui/icons-material/Menu';
 import ListItemText from '@mui/material/ListItemText';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import {Link, Outlet} from "react-router-dom";
+import {Link, Outlet, useParams} from "react-router-dom";
+import {useAppDispatch} from "../app/hooks";
+import {fetchFlights} from "./flightsSlice";
 
 const drawerWidth = 240;
 
 interface Props {
     window?: () => Window;
+
 }
 
 export default function Airport(props: Props) {
+    const {airportName} = useParams()
+    const airport = airportsData.find(airport => airport.iata_code === airportName)
+
     const { window } = props;
     const [mobileOpen, setMobileOpen] = React.useState(false);
-
+    const dispatch = useAppDispatch()
     const handleDrawerToggle = () => {
         setMobileOpen(!mobileOpen);
     };
@@ -35,7 +41,7 @@ export default function Airport(props: Props) {
             <Divider />
             <List>
                 {airportsData.map((airport) => (
-                    <ListItem key={airport.iata_code} disablePadding>
+                    <ListItem key={airport.iata_code} onClick={()=> dispatch(fetchFlights(airport.iata_code))} disablePadding>
                         <Link to={`/airports/${airport.iata_code}`}>
                             <ListItemButton>
                                 <ListItemText primary={airport.name} />
@@ -70,7 +76,7 @@ export default function Airport(props: Props) {
                         <MenuIcon />
                     </IconButton>
                     <Typography variant="h6" noWrap component="div">
-                        Responsive drawer
+                        {airport ? airport.name : "Choose airport"}
                     </Typography>
                 </Toolbar>
             </AppBar>
@@ -108,7 +114,7 @@ export default function Airport(props: Props) {
             </Box>
             <Box
                 component="main"
-                sx={{ flexGrow: 1, p: 3, width: { sm: `calc(100% - ${drawerWidth}px)` } }}
+                sx={{ flexGrow: 1 , p: 3, width: { sm: `calc(100% - ${drawerWidth}px)` } }}
             >
                 <Toolbar />
                 <Outlet />
