@@ -1,11 +1,11 @@
 export const airportsData = [
-    {   name: "Warszawa Okęcie",
-        iata_code: "WAW",
-        icao_code: "EPWA"
+    {   name: "Amsterdam Airport Schiphol",
+        iata_code: "AMS",
+        icao_code: "EHAM"
     },
     {
-        name: "Warszawa Modlin",
-        iata_code: "WMI",
-        icao_code: "EPMO"
+        name: "Paris Charles de Gaulle Airport",
+        iata_code: "CDG",
+        icao_code: "LFPG"
     }
 ]

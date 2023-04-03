@@ -18,6 +18,9 @@ export interface Flight{
     flight_iata: string;
     arr_time: string;
     dep_time: string;
+    lng: number;
+    lat: number;
+    dir: number;
 
 
 
@@ -39,11 +42,32 @@ type FlightsResponse = {
 }
 export const fetchFlights = createAsyncThunk<Flight[], string>('flights/fetchFlights', async(airportIata)=> {
 
-    const flightsData: Array<Flight> = [];
+    let flightsData: Array<Flight> = [];
     const resultDepartures = await axios.get<FlightsResponse>(`https://airlabs.co/api/v9/schedules?dep_iata=${airportIata}&api_key=YOUR-API-KEY`)
     flightsData.push(...resultDepartures.data.response)
+
     const resultArrivals = await axios.get<FlightsResponse>(`https://airlabs.co/api/v9/schedules?arr_iata=${airportIata}&api_key=YOUR-API-KEY`)
     flightsData.push(...resultArrivals.data.response)
+
+    const resultDeparturesRealTime = await axios.get<FlightsResponse>(`https://airlabs.co/api/v9/flights?dep_iata=${airportIata}&api_key=YOUR-API-KEY`)
+    resultDeparturesRealTime.data.response.forEach(flightRealTime => {
+        const flightIndex = flightsData.findIndex(flight => flight.flight_icao === flightRealTime.flight_icao)
+        if(flightIndex > -1){
+            flightsData[flightIndex].lng = flightRealTime.lng;
+            flightsData[flightIndex].lat = flightRealTime.lat;
+            flightsData[flightIndex].dir = flightRealTime.dir;
+        }
+    })
+    const resultArrivalsRealTime = await axios.get<FlightsResponse>(`https://airlabs.co/api/v9/flights?arr_iata=${airportIata}&api_key=YOUR-API-KEY`)
+    resultArrivalsRealTime.data.response.forEach(flightRealTime => {
+        const flightIndex = flightsData.findIndex(flight => flight.flight_icao === flightRealTime.flight_icao)
+        if(flightIndex > -1){
+            flightsData[flightIndex].lng = flightRealTime.lng;
+            flightsData[flightIndex].lat = flightRealTime.lat;
+            flightsData[flightIndex].dir = flightRealTime.dir;
+        }
+    })
+
     return flightsData
 
 })
@@ -51,7 +75,7 @@ export const fetchFlights = createAsyncThunk<Flight[], string>('flights/fetchFli
 
 const initialState: EntityState<Flight>& { error: null | string | undefined; status: string; } = flightsAdapter.getInitialState({
     status: 'idle',
-    error: null
+    error: null,
 
 })
 const flightsSlice = createSlice({

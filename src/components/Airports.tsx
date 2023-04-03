@@ -17,6 +17,7 @@ import {Link, Outlet, useParams} from "react-router-dom";
 import {useAppDispatch} from "../app/hooks";
 import {fetchFlights} from "./flightsSlice";
 
+
 const drawerWidth = 240;
 
 interface Props {
@@ -24,7 +25,7 @@ interface Props {
 
 }
 
-export default function Airport(props: Props) {
+export default function Airports(props: Props) {
     const {airportName} = useParams()
     const airport = airportsData.find(airport => airport.iata_code === airportName)
 
@@ -39,12 +40,12 @@ export default function Airport(props: Props) {
         <div>
             <Toolbar />
             <Divider />
-            <List>
+            <List role='listAirports'>
                 {airportsData.map((airport) => (
                     <ListItem key={airport.iata_code} onClick={()=> dispatch(fetchFlights(airport.iata_code))} disablePadding>
                         <Link to={`/airports/${airport.iata_code}`}>
                             <ListItemButton>
-                                <ListItemText primary={airport.name} />
+                                <ListItemText primary={airport.name} role='airportLink'/>
                             </ListItemButton>
                         </Link>
                     </ListItem>
@@ -114,11 +115,12 @@ export default function Airport(props: Props) {
             </Box>
             <Box
                 component="main"
-                sx={{ flexGrow: 1 , p: 3, width: { sm: `calc(100% - ${drawerWidth}px)` } }}
+                sx={{ flexGrow: 1 , width: { sm: `calc(100% - ${drawerWidth}px)` } }}
             >
                 <Toolbar />
                 <Outlet />
             </Box>
         </Box>
+
     );
 }
